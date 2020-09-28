@@ -8,6 +8,9 @@
 #ifndef AGENT_H
 #define AGENT_H
 
+#define MAX_NUMBER_AGENTS         15
+#define MAX_AGENTNAME_LENGTH      45
+
 /* Agent Structure, used to hold their name and
    a key used for encryption and decryption. */
 typedef struct {
@@ -24,7 +27,7 @@ typedef struct {
     Agent  pool[MAX_NUMBER_AGENTS];
 } AgentPool;
 
-/* */
+/* Encrypts a given message, using a shift key  */
 void encryptMessage(char book[], size_t bookLength, Agent* agent, char message[], size_t messageLength);
 
 /* */
@@ -56,3 +59,5 @@ Agent* findAgent(char name[], AgentPool* agentPool);
 
 /* */
 void readAgentName(char agentName[], size_t maxAgentNameLength);
+
+#endif

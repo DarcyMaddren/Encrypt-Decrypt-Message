@@ -23,6 +23,7 @@ int main(void)
 {
     // Define variables to be used throughtout execution.
     char agentname[MAX_AGENTNAME_LENGTH] = "";
+    char filename[MAX_FILENAME_LENGTH] = "";
     FILE* file = NULL;
     char book[MAX_TEXTFILE_SIZE] = "";
     char message[MAX_TEXTFILE_SIZE] = "";
@@ -32,29 +33,31 @@ int main(void)
     Agent* agent = NULL;
 
     /* Read in the cipher book, from filename to book. */
+    printf("Please enter your cipher book filename: ");
     scanf("%80s", filename);
-    file = fopen("iliad.txt", "r");
+    file = fopen(filename, "r");
     if (file == NULL) {
+        printf("%s\n", filename);
         printf("File not found... program will fail with segmentation fault\n");
     }
     bookLength = readCipherBook(file, book, MAX_TEXTFILE_SIZE);
     fclose(file);
 
     /* Read in the message, from filename to message. */
+    printf("Please enter your message filename: ");
     scanf("%80s", filename);
-    //file = fopen(filename, "r");
-    file = fopen("studentcipherbook.txt", "r");
+    file = fopen(filename, "r");
     if (file == NULL) {
         printf("File not found... program will fail with segmentation fault\n");
     }
     messageLength = readMessage(file, message, MAX_TEXTFILE_SIZE);
     fclose(file);
 
+    printf("Please enter your agents list filename: ");
     /* Read the agents from filename into agentPool. */
     scanf("%80s", filename);
+    file = fopen(filename, "r");
     initAgentPool(&agentPool);
-    //file = fopen(filename, "r");
-    file = fopen("agents.txt", "r");
     if (file == NULL) {
         printf("File not found... program will fail with segmentation fault\n");
     }
@@ -64,20 +67,20 @@ int main(void)
     fclose(file);
 
     /* Decrypts, encrypts and prints the outputs. */
+    printf("Please enter your agents name: ");
     getchar();
     readAgentName(agentname, MAX_AGENTNAME_LENGTH);
-    //agent = findAgent(agentname, &agentPool);
-    agent = findAgent("Maxwell Smart", &agentPool);
+    agent = findAgent(agentname, &agentPool);
     if (agent != NULL) {
         encryptMessage(book, bookLength, agent, message, messageLength);
-        printf("Secret message is: ");
+        printf("\nSecret message is: ");
         for(size_t i=0; i < messageLength; i++) {
             printf(" %d", message[i]);
         }
         decryptMessage(book, bookLength, agent, message, messageLength);
         printf("\nDecrypted message is: %s\n", message);
     } else {
-        printf("No Agent found by the name %s\n", agentname);
+        printf("\nNo Agent found by the name %s\n", agentname);
     }
     return 0;
 }
