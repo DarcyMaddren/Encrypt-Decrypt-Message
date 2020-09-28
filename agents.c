@@ -5,18 +5,25 @@
 #include <stdbool.h>
 #include <math.h>
 
-// Common declarations
+
+
+/* Common Declerations. */
 #define MAX_TEXTFILE_SIZE       4096
 #define MAX_FILENAME_LENGTH       80
 #define MAX_NUMBER_AGENTS         15
 #define MAX_AGENTNAME_LENGTH      45
 #define MAX_LINE_LENGTH           96
 
+/* Agent Structure, used to hold their name and
+   a key used for encryption and decryption. */
 typedef struct {
     char name[MAX_AGENTNAME_LENGTH];
     size_t key;
 } Agent;
 
+/* Agent Pool Structure, used to hold a list of all
+   agents, with pointers to the size of the pool and
+   the next open agent slot. */
 typedef struct {
     size_t size;
     size_t next;
@@ -39,7 +46,7 @@ void readAgentName(char agentName[], size_t maxAgentNameLength);
 
 int main(void)
 {
-    //char filename[80] = "";
+    // Define variables to be used throughtout execution.
     char agentname[MAX_AGENTNAME_LENGTH] = "";
     FILE* file = NULL;
     char book[MAX_TEXTFILE_SIZE] = "";
@@ -49,7 +56,7 @@ int main(void)
     AgentPool agentPool;
     Agent* agent = NULL;
 
-    // Read in the cipher book
+    /* Read in the cipher book, from filename to book. */
     scanf("%80s", filename);
     file = fopen("iliad.txt", "r");
     if (file == NULL) {
@@ -58,8 +65,9 @@ int main(void)
     bookLength = readCipherBook(file, book, MAX_TEXTFILE_SIZE);
     fclose(file);
 
-    // Read in the message
+    /* Read in the message, from filename to message. */
     scanf("%80s", filename);
+    //file = fopen(filename, "r");
     file = fopen("studentcipherbook.txt", "r");
     if (file == NULL) {
         printf("File not found... program will fail with segmentation fault\n");
@@ -67,8 +75,10 @@ int main(void)
     messageLength = readMessage(file, message, MAX_TEXTFILE_SIZE);
     fclose(file);
 
+    /* Read the agents from filename into agentPool. */
     scanf("%80s", filename);
     initAgentPool(&agentPool);
+    //file = fopen(filename, "r");
     file = fopen("agents.txt", "r");
     if (file == NULL) {
         printf("File not found... program will fail with segmentation fault\n");
@@ -78,8 +88,10 @@ int main(void)
     }
     fclose(file);
 
+    /* Decrypts, encrypts and prints the outputs. */
     getchar();
     readAgentName(agentname, MAX_AGENTNAME_LENGTH);
+    //agent = findAgent(agentname, &agentPool);
     agent = findAgent("Maxwell Smart", &agentPool);
     if (agent != NULL) {
         encryptMessage(book, bookLength, agent, message, messageLength);
@@ -95,8 +107,13 @@ int main(void)
     return 0;
 }
 
-// Book in form 'thisisacipherbook' (no spaces).
-// Message in form '09 39 42 12 58 48 42 48' (encripted).
+/* Loops through a list message and encryptes the char according
+   to a book of keys and agents shift key.
+   Input: 'book' - Book of keys used to encrypt message.
+          'bookLength' - Book length.
+          'agent' - Agent used as aditional shift key.
+          'message' - Message to be encrypted.
+          'messageLength' - Message length. */
 void encryptMessage(char book[], size_t bookLength, Agent* agent, char message[], size_t messageLength)
 {
     size_t key = agent->key;
@@ -108,6 +125,13 @@ void encryptMessage(char book[], size_t bookLength, Agent* agent, char message[]
     }
 }
 
+/* Loops through a list message and decryptes the char according
+   to an book of keys and agents shift key.
+   Input: 'book' - Book of keys used to decrypt message.
+          'bookLength' - Book length.
+          'agent' - Agent used as aditional shift key.
+          'message' - Message to be decrypted.
+          'messageLength' - Message length. */
 void decryptMessage(char book[], size_t bookLength, Agent* agent, char message[], size_t messageLength)
 {
     size_t key = agent->key % bookLength;
@@ -130,6 +154,12 @@ void decryptMessage(char book[], size_t bookLength, Agent* agent, char message[]
     }
 }
 
+/* Loops through a text file and puts the characters read
+   into an array of chars.
+   Input: 'file' - File to be read from.
+          'text' - Char array where characters are placed.
+          'maxTextSize' - Size of the text buffer.
+   Output: 'count' - Length of the text buffer after processing. */
 size_t readText(FILE* file, char text[], size_t maxTextSize)
 {
     int c;
@@ -142,6 +172,12 @@ size_t readText(FILE* file, char text[], size_t maxTextSize)
     return count;
 }
 
+/* Loops through the cipher key book, removes whitespaces, new lines
+   and other similar chars then places the output into a char array.
+   Input: 'file' - File to be read from.
+          'text' - Char array where characters are placed.
+          'maxTextSize' - Size of the text buffer.
+   Output: 'count' - Length of the text buffer after processing. */
 size_t readCipherBook(FILE* file, char text[], size_t maxTextSize)
 {
     size_t textLength = readText(file, text, maxTextSize);
