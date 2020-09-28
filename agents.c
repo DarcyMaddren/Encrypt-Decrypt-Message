@@ -1,4 +1,5 @@
 /* This file implements the functions defined in agents.h
+ *
  * Author: Darcy Maddren
  * Date: September 2020
  */
@@ -171,7 +172,13 @@ size_t readCipherBook(FILE* file, char text[], size_t maxTextSize)
     return count;
 }
 
-
+/* Takes a file and reads each character into a text buffer of
+   a max size and returns the number of chars read. Used to read
+   the given message.
+   Input: 'file' - File to be read from.
+          'text' - Char array where characters are placed.
+          'maxTextSize' - Size of the text buffer.
+   Output: 'Count' - Length of the text buffer after processing. */
 size_t readMessage(FILE* file, char text[], size_t maxTextSize)
 {
     size_t textLength = readText(file, text, maxTextSize);
@@ -191,14 +198,19 @@ size_t readMessage(FILE* file, char text[], size_t maxTextSize)
     return count;
 }
 
-// A function to initialise an AgentPool structure
+/* Initializes the agent pool structure
+   Input: 'agentPool' - Current pool of agents given throughtout
+           a txt file. */
 void initAgentPool(AgentPool* agentPool)
 {
     agentPool->size = MAX_NUMBER_AGENTS;
     agentPool->next = 0;
 }
 
-// A function that returns a pointer to next agent in pool
+/* Returns a pointer to the next agent in the pool.
+   Input: 'agentPool' - Current pool of agents given throughtout
+        a txt file.
+   Output: 'Agent*' - Pointer to the next agent in the pool. */
 Agent* newAgent(AgentPool* agentPool)
 {
     size_t next = agentPool->next;
@@ -209,7 +221,11 @@ Agent* newAgent(AgentPool* agentPool)
     return NULL;
 }
 
-// A function to read a file with agent data in it, adding the agent to a agentlist and returning a reference to the agent
+/* Takes a agent file and reads the next line into the pool of
+   current agents. (Discards bad lines.)
+   Input: 'file' - File of agents.
+          'agentPool' - Pool of agents.
+   Output: 'Agent' - Pointer the the agent read. */
 Agent* readAgent(FILE* file, AgentPool* agentPool)
 {
     char line[MAX_LINE_LENGTH];
@@ -239,7 +255,9 @@ Agent* readAgent(FILE* file, AgentPool* agentPool)
     return agent;
 }
 
-// A function to delete an agent from an AgentPool
+/* Deletes a given agent from the agent pool.
+   Input: 'agent' - Pointer to agent to be removed.
+          'agentPool' - Pointer to pool of agents. */
 void deleteAgent(Agent* agent, AgentPool* agentPool)
 {
     int i;
@@ -254,7 +272,10 @@ void deleteAgent(Agent* agent, AgentPool* agentPool)
     agentPool->next--;
 }
 
-// A function that searches all agents for one with name
+/* Searches the agent pool for an array of characters.
+   Input: 'name' - Array of characters to be searched in agent Pool
+          'agentPool' - Pointer to current pool of agents.
+   Output: 'Agent' - Pointer to the found agent. (NULL if none) */
 Agent* findAgent(char name[], AgentPool* agentPool)
 {
     Agent* agent = NULL;
@@ -267,6 +288,10 @@ Agent* findAgent(char name[], AgentPool* agentPool)
     return NULL;
 }
 
+/* Reads an agent name as input from the user to be used
+   for their key.
+   Input: 'agentName' - Container for searched name.
+          'maxAgentNameLength' - Max size of the agentName array. */
 void readAgentName(char agentName[], size_t maxAgentNameLength)
 {
     char c;
